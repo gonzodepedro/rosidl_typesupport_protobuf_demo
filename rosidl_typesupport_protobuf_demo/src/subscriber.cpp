@@ -16,12 +16,8 @@
 #include <memory>
 #include <string>
 
-#include "rclcpp/type_adapter.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-#include "std_msgs/msg/string.hpp"
-#include "std_msgs/rosidl_adapter_proto__visibility_control.h"
-#include "std_msgs/msg/String.pb.h"
 #include "std_msgs/msg/string__typeadapter_protobuf_cpp.hpp"
 
 using std::placeholders::_1;
@@ -35,9 +31,6 @@ using std::placeholders::_1;
 class MinimalSubscriber : public rclcpp::Node
 {
 
-using MyAdaptedType = rclcpp::TypeAdapter<std_msgs::msg::pb::String, std_msgs::msg::String>;
-
-
 public:
   MinimalSubscriber()
   : Node("minimal_subscriber")
@@ -45,8 +38,8 @@ public:
     subscription_ = this->create_subscription<std_msgs::msg::String>(
       "topic", 10, std::bind(&MinimalSubscriber::topic_callback, this, _1));
 
-    subscription2_ = this->create_subscription<MyAdaptedType>(
-      "topic", 10, std::bind(&MinimalSubscriber::topic_callback2, this, _1));
+    // subscription2_ = this->create_subscription<std_msgs::msg::pb::String>(
+    //   "topic", 10, std::bind(&MinimalSubscriber::topic_callback2, this, _1));
   }
 
 private:
@@ -55,12 +48,12 @@ private:
     RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg.data.c_str());
   }
 
-  void topic_callback2(const std_msgs::msg::pb::String & msg) const
-  {
-    RCLCPP_INFO(this->get_logger(), "I heard Proto: '%s'", msg.data().c_str());
-  }
+  // void topic_callback2(const std_msgs::msg::pb::String & msg) const
+  // {
+  //   RCLCPP_INFO(this->get_logger(), "I heard Proto: '%s'", msg.data().c_str());
+  // }
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
-  rclcpp::Subscription<MyAdaptedType>::SharedPtr subscription2_;
+  // rclcpp::Subscription<std_msgs::msg::pb::String>::SharedPtr subscription2_;
 };
 
 int main(int argc, char * argv[])

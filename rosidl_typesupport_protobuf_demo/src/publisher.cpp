@@ -17,27 +17,20 @@
 #include <memory>
 #include <string>
 
-#include "rclcpp/type_adapter.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-#include "std_msgs/msg/string.hpp"
-#include "std_msgs/rosidl_adapter_proto__visibility_control.h"
-#include "std_msgs/msg/String.pb.h"
 #include "std_msgs/msg/string__typeadapter_protobuf_cpp.hpp"
-
-
 
 using namespace std::chrono_literals;
 
 class MinimalPublisher : public rclcpp::Node
 {
-  using MyAdaptedType = rclcpp::TypeAdapter<std_msgs::msg::pb::String, std_msgs::msg::String>;
 
 public:
   MinimalPublisher()
   : Node("minimal_publisher"), count_(0)
   {
-    publisher_ = this->create_publisher<MyAdaptedType>("topic", 10);
+    publisher_ = this->create_publisher<std_msgs::msg::pb::String>("topic", 10);
     timer_ = this->create_wall_timer(
       500ms, std::bind(&MinimalPublisher::timer_callback, this));
   }
@@ -45,8 +38,6 @@ public:
 private:
   void timer_callback()
   {
-    //std::string message = "Hello, world! " + std::to_string(count_++);
-
     std_msgs::msg::pb::String message;
     message.set_data("Hello, world! " + std::to_string(count_++));
 
@@ -54,7 +45,7 @@ private:
     publisher_->publish(message);
   }
   rclcpp::TimerBase::SharedPtr timer_;
-  rclcpp::Publisher<MyAdaptedType>::SharedPtr publisher_;
+  rclcpp::Publisher<std_msgs::msg::pb::String>::SharedPtr publisher_;
   size_t count_;
 };
 
